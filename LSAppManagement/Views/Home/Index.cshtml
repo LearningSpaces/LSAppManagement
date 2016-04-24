@@ -1,0 +1,24 @@
+﻿@model IEnumerable<LSAppManagement.Models.ApplicationModel>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<div class="list-group">
+
+    @foreach (var item in Model)
+    {
+        <a class="list-group-item @(@item.Deleted ? "list-group-item-danger" : "")" href="@Url.Action("Actions","Home", new { id=item.ID})">
+            <div class="row">
+                <div class="col-xs-2">@item.ID</div>
+                <div class="col-xs-10">@item.Name</div>
+            </div>
+        </a>
+    }
+
+</div>
