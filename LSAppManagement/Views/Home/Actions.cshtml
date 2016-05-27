@@ -1,0 +1,46 @@
+﻿@model LSAppManagement.Models.ApplicationModel
+
+@{
+    ViewBag.Title = "Actions";
+}
+
+<h3>@Model.Name</h3>
+<div class="row">
+    <div class="col-xs-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">Details</div>
+            <div class="panel-body">
+                <small class="pull-right">
+                    <a href="@Url.Action("Edit","Home",new { id = Model.ID} )">
+                        <span class="glyphicon glyphicon-edit"></span> Edit
+                    </a>
+                </small>
+                <dl>
+                    <dt>@Html.NameFor(m => m.ID)</dt>
+                    <dd>@Model.ID</dd>
+                    <dt>@Html.NameFor(m => m.Name)</dt>
+                    <dd>@Model.Name</dd>
+                    <dt>@Html.NameFor(m => m.ProjectName)</dt>
+                    <dd>@Model.ProjectName</dd>
+                    <dt>@Html.NameFor(m => m.WebappPath)</dt>
+                    <dd>@Model.WebappPath</dd>
+                    <dt>@Html.NameFor(m => m.GithubRepository)</dt>
+                    <dd>@Model.GithubRepository</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-xs-6">
+        <div class="panel panel-default">
+            <div class="panel-heading">Actions</div>
+            <div class="list-group">
+                <a class="list-group-item" href="@Url.Action("CodeMove","Home",new { id = Model.ID})">
+                    <span class="glyphicon glyphicon-plus-sign"></span> New Code Move
+                </a>
+                <a class="list-group-item">
+                    <span class="glyphicon glyphicon-book"></span> Log
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

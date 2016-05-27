@@ -1,0 +1,65 @@
+﻿@model LSAppManagement.Models.CodeMoveModel
+
+@{
+    var Repo = LSAppManagement.Helpers.GitHubHelper.GetRepo(Model.App.GithubRepository);
+    var Commits = new List<LSAppManagement.Models.CommitModel>();
+    if (Repo != null) {
+        Commits = Repo.Commits;
+    }
+    else
+    {
+        ViewBag.Error = "Repo could not be reached";
+    }
+
+    var Environments = new List<SelectListItem>(){
+        new SelectListItem(){
+            Text = "Development",
+            Value = "Dev"
+        },
+        new SelectListItem(){
+            Text = "Production",
+            Value = "Prod"
+        }
+    };
+}
+<h3>@Model.App.Name</h3>
+
+@using (Html.BeginForm("CodeMove", "Home", FormMethod.Post, new { }))
+{
+    @Html.AntiForgeryToken()
+    <h1>New Code Move</h1>
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    @Html.HiddenFor(m => m.App)
+    <div class="form-group row">
+        @Html.LabelFor(m => m.Environment, new { @class = "col-xs-2"})
+        @Html.DropDownListFor(m => m.Environment, Environments, new { @class = "form-control col-xs-10"})
+    </div>
+
+    <div class="form-group row">
+        @Html.LabelFor(m => m.Comments, new { @class = "col-xs-2" })
+        @Html.EditorFor(m => m.Comments, new { @class = "form-control col-xs-10" })
+    </div>
+    <div class="form-group row">
+        @Html.LabelFor(m => m.SHA1, new { @class = "col-xs-2" })
+        @Html.DropDownListFor(m => m.SHA1, Commits.Select(c => new SelectListItem()
+        {
+            Text = c.Message,
+            Value = c.SHA1
+        }).Take(10), new { @class = "form-control col-xs-10" });
+    </div>
+    <div class="form-group">
+        <input id="btn-submit" type="submit" value="Create" class="btn" />
+    </div>
+}
+
+@section scripts
+{
+    <script>
+    $(document).ready(function () {
+        $("#@Html.IdFor(m => m.Comments)").val($("#@Html.IdFor(m => m.SHA1) option:selected").text());
+        });
+        $("#@Html.IdFor(m => m.SHA1)").change(function () {
+            $("#@Html.IdFor(m => m.Comments)").val($("#@Html.IdFor(m => m.SHA1) option:selected").text());
+    });
+    </script>
+}

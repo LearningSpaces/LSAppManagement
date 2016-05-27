@@ -1,0 +1,22 @@
+﻿@model LSAppManagement.Models.ApplicationModel
+
+@{
+    ViewBag.Title = "Delete";
+}
+
+@using (Html.BeginForm("Delete", "Home", FormMethod.Post, new { }))
+{
+    
+    @Html.ListBoxFor(app => app, 
+}
+<div class="list-group">
+    @foreach (var item in Model)
+    {
+        <a class="list-group-item @(@item.Deleted ? "list-group-item-danger" : "")">
+            <div class="row">
+                <div class="col-xs-2">@item.ID</div>
+                <div class="col-xs-10">@item.Name</div>
+            </div>
+        </a>
+    }
+</div>
