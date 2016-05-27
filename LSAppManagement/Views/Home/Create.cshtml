@@ -1,8 +1,57 @@
-﻿
-@{
-    ViewBag.Title = "Create";
-}
+﻿@model LSAppManagement.Models.ApplicationModel
 
 @{
-    
+    ViewBag.Title = "Create";
+    var org = LSAppManagement.Helpers.GitHubHelper.GetOrg();
+    var Repos = org.Repos;
+}
+
+@using (Html.BeginForm("Create", "Home", FormMethod.Post, new { }))
+{
+    @Html.AntiForgeryToken()
+    <h1>Create App</h1>
+    <hr />
+    @Html.ValidationSummary("", new { @class = "text-danger" })
+    <div class="form-group row">
+        @Html.LabelFor(m => m.GithubRepository, new { @class = "col-xs-4" })
+        @Html.DropDownListFor(m => m.GithubRepository,
+            Repos.Select(r => new SelectListItem()
+            {
+                Text = r.FullName,
+                Value = r.Name
+            }).ToList(),
+            new { @class = "form-control col-xs-8" }
+        )
+    </div>
+    <div class="form-group row">
+        @Html.LabelFor(m => m.Name, new { @class = "col-xs-4" })
+        @Html.TextBoxFor(m => m.Name, new { @class = "form-control col-xs-8" })
+    </div>
+    <div class="form-group row">
+        @Html.LabelFor(m => m.ProjectName, new { @class = "col-xs-4" })
+        @Html.TextBoxFor(m => m.ProjectName, new { @class = "form-control col-xs-8" })
+    </div>
+    <div class="form-group row">
+        @Html.LabelFor(m => m.WebappPath, new { @class = "col-xs-4" })
+        @Html.TextBoxFor(m => m.WebappPath, new { @class = "form-control col-xs-8" })
+    </div>
+    <div class="form-group row">
+        @Html.LabelFor(m => m.Description, new { @class = "col-xs-4" })
+        @Html.TextBoxFor(m => m.Description, new { @class = "form-control col-xs-8" })
+    </div>
+    <div class="form-group row">
+        <input id="btn-submit" type="submit" value="Create" class="btn" />
+    </div>
+}
+
+@section scripts
+{
+    <script>
+    $(document).ready(function () {
+        $("#@Html.IdFor(m => m.ProjectName)").val($("#@Html.IdFor(m => m.GithubRepository) option:selected").val());
+    });
+        $("#@Html.IdFor(m => m.GithubRepository)").change(function () {
+        $("#@Html.IdFor(m => m.ProjectName)").val($("#@Html.IdFor(m => m.GithubRepository) option:selected").val());
+    });
+</script>
 }

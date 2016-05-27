@@ -52,3 +52,7 @@ C:\github_OU\LSAppManagement\LSAppManagement\bin\Microsoft.Owin.Security.Twitter
 C:\github_OU\LSAppManagement\LSAppManagement\bin\Microsoft.Owin.Security.MicrosoftAccount.xml
 C:\github_OU\LSAppManagement\LSAppManagement\obj\Debug\LSAppManagement.dll
 C:\github_OU\LSAppManagement\LSAppManagement\obj\Debug\LSAppManagement.pdb
+C:\github_OU\LSAppManagement\LSAppManagement\bin\Octokit.dll
+C:\github_OU\LSAppManagement\LSAppManagement\bin\Octokit.pdb
+C:\github_OU\LSAppManagement\LSAppManagement\bin\Octokit.xml
+C:\github_OU\LSAppManagement\LSAppManagement\obj\Debug\LSAppManagement.csprojResolveAssemblyReference.cache

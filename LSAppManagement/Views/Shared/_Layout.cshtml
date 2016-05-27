@@ -30,6 +30,9 @@
         </div>
     </div>
     <div class="container body-content">
+        <div class="row danger" id="error_panel">
+            @ViewBag.Error
+        </div>
         @RenderBody()
         <hr />
         <footer>
@@ -40,5 +43,15 @@
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+    <script>
+        console.log("@ViewBag.Error");
+        if ("@ViewBag.Error" != "") {
+            $("#error_panel").show();
+            setTimeout(function () {
+                $("#error_panel").fadeOut("slow");
+            }, 1000 * 5);
+        }
+    </script>
 </body>
+
 </html>

@@ -11,18 +11,18 @@ namespace LSAppManagement.Controllers
 {
     public class HomeController : Controller
     {
-        private ApplicationDbContext db = DbFactory.getDb();
-
         public ActionResult Index()
         {
-            var models = db.Applications.ToList().Select(entity => (ApplicationModel) entity);
-            return View(models);
+            using (var db = DbFactory.getDb())
+            {
+                var apps = db.Applications.ToList().Select(entity => (ApplicationModel)entity);
+                return View(apps);
+            }
         }
 
         public ActionResult Create()
         {
             ViewBag.Message = "Create";
-
             return View();
         }
 
@@ -34,9 +34,13 @@ namespace LSAppManagement.Controllers
 
             if (ModelState.IsValid)
             {
-                var entity = (ApplicationEntity)app;
-
-                return RedirectToAction("Actions", "Home", new { id = app.ID });
+                using (var db = DbFactory.getDb())
+                {
+                    var entity = (ApplicationEntity)app;
+                    db.Applications.Add(entity);
+                    db.SaveChanges();
+                    return RedirectToAction("Actions", "Home", new { id = entity.ID });
+                }
             }
 
             return View(app);
@@ -45,28 +49,35 @@ namespace LSAppManagement.Controllers
         public ActionResult Actions(int id)
         {
             ViewBag.Message = "Actions";
+            using (var db = DbFactory.getDb())
+            {
+                ApplicationModel app = (ApplicationModel)db.Applications.Find(id);
 
-            ApplicationModel app = (ApplicationModel)db.Applications.Find(id);
-
-            return View(app);
+                return View(app);
+            }
         }
 
         public ActionResult Edit(int id)
         {
             ViewBag.Message = "Edit";
 
-            ApplicationModel app = (ApplicationModel) db.Applications.Find(id);
+            using (var db = DbFactory.getDb())
+            {
+                ApplicationModel app = (ApplicationModel)db.Applications.Find(id);
 
-            return View(app);
+                return View(app);
+            }
         }
 
         public ActionResult Delete()
         {
             ViewBag.Message = "Delete";
 
-            var apps = db.Applications.Where(app => !app.Deleted).ToList().Select(entity => (ApplicationModel) entity);
-
-            return View(apps);
+            using (var db = DbFactory.getDb())
+            {
+                var apps = db.Applications.Where(app => !app.Deleted).ToList().Select(entity => (ApplicationModel)entity);
+                return View(apps);
+            }
         }
 
         [HttpPost]
@@ -75,12 +86,15 @@ namespace LSAppManagement.Controllers
         {
             if (ModelState.IsValid)
             {
-                //TODO: Delete App From IIS but not the files on the server
-                var entity = db.Applications.Find(app.ID);
-                entity.Deleted = true;
-                db.SaveChanges();
+                using (var db = DbFactory.getDb())
+                {
+                    //TODO: Delete App From IIS but not the files on the server
+                    var entity = db.Applications.Find(app.ID);
+                    entity.Deleted = true;
+                    db.SaveChanges();
 
-                return RedirectToAction("Delete", "Home");
+                    return RedirectToAction("Delete", "Home");
+                }
             }
 
             return View(app);
@@ -88,9 +102,11 @@ namespace LSAppManagement.Controllers
 
         public ActionResult Restore()
         {
-            var apps = db.Applications.Where(app => app.Deleted).ToList().Select(entity => (ApplicationModel) entity);
-
-            return View(apps);
+            using (var db = DbFactory.getDb())
+            {
+                var apps = db.Applications.Where(app => app.Deleted).ToList().Select(entity => (ApplicationModel)entity);
+                return View(apps);
+            }
         }
 
         [HttpPost]
@@ -99,15 +115,37 @@ namespace LSAppManagement.Controllers
         {
             if (ModelState.IsValid)
             {
-                //TODO: IIS to restore web app at location
-                var entity = db.Applications.Find(app.ID);
-                entity.Deleted = false;
-                db.SaveChanges();
+                using (var db = DbFactory.getDb())
+                {
+                    //TODO: IIS to restore web app at location
+                    var entity = db.Applications.Find(app.ID);
+                    entity.Deleted = false;
+                    db.SaveChanges();
 
-                return RedirectToAction("Restore", "Home");
+                    return RedirectToAction("Restore", "Home");
+                }
             }
 
             return View(app);
+        }
+
+        public ActionResult CodeMove(int id)
+        {
+            using (var db = DbFactory.getDb())
+            {
+                ApplicationModel app = (ApplicationModel)db.Applications.Find(id);
+                var model = new CodeMoveModel()
+                {
+                    App = app
+                };
+                return View(model);
+            }
+        }
+
+        [HttpPost]
+        public ActionResult CodeMove(CodeMoveModel info)
+        {
+            return Json(info);
         }
     }
 }
