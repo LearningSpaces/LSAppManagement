@@ -6,10 +6,10 @@
     var Repos = org.Repos;
 }
 
+<h3>Create App</h3>
 @using (Html.BeginForm("Create", "Home", FormMethod.Post, new { }))
 {
     @Html.AntiForgeryToken()
-    <h1>Create App</h1>
     <hr />
     @Html.ValidationSummary("", new { @class = "text-danger" })
     <div class="form-group row">
