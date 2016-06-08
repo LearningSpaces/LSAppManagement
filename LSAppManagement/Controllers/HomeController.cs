@@ -147,7 +147,7 @@ namespace LSAppManagement.Controllers
         [HttpPost]
         public ActionResult CodeMove(CodeMoveModel info)
         {
-            var request = WebRequest.CreateHttp("http://localhost/LSAppManagementWebservice/Build/Add?id=" + info.AppId + "&sha1=" + info.SHA1 + "&DeployEnv=" + info.Environment);
+            var request = WebRequest.CreateHttp("http://localhost/AppManagementWebservice/Build/Add?id=" + info.AppId + "&sha1=" + info.SHA1 + "&DeployEnv=" + info.Environment);
             request.Headers.Add("Authorization", "Basic " + Settings.WebserviceCredentials);
 
             try
