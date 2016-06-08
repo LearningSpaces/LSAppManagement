@@ -1,9 +1,16 @@
 ﻿@model LSAppManagement.Models.CodeMoveModel
 
 @{
-    var Repo = LSAppManagement.Helpers.GitHubHelper.GetRepo(Model.App.GithubRepository);
+    LSAppManagement.Models.ApplicationModel App = null;
+    using (var db = LSAppManagement.Helpers.DbFactory.getDb())
+    {
+        App = (LSAppManagement.Models.ApplicationModel) db.Applications.SingleOrDefault(a => a.ID == Model.AppId);
+    }
+    
+    var Repo = LSAppManagement.Helpers.GitHubHelper.GetRepo(App.GithubRepository);
     var Commits = new List<LSAppManagement.Models.CommitModel>();
-    if (Repo != null) {
+    if (Repo != null)
+    {
         Commits = Repo.Commits;
     }
     else
@@ -22,14 +29,14 @@
         }
     };
 }
-<h3>@Model.App.Name</h3>
+<h3>@App.Name</h3>
 
 @using (Html.BeginForm("CodeMove", "Home", FormMethod.Post, new { }))
 {
     @Html.AntiForgeryToken()
     <h1>New Code Move</h1>
     @Html.ValidationSummary("", new { @class = "text-danger" })
-    @Html.HiddenFor(m => m.App)
+    @Html.Hidden("AppId", App.ID);
     <div class="form-group row">
         @Html.LabelFor(m => m.Environment, new { @class = "col-xs-2"})
         @Html.DropDownListFor(m => m.Environment, Environments, new { @class = "form-control col-xs-10"})

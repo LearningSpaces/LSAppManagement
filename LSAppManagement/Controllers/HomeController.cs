@@ -1,9 +1,13 @@
 ﻿using LSAppManagement.Helpers;
 using LSAppManagement.Models;
 using LSAppManagement.Models.DB;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 
@@ -134,10 +138,8 @@ namespace LSAppManagement.Controllers
             using (var db = DbFactory.getDb())
             {
                 ApplicationModel app = (ApplicationModel)db.Applications.Find(id);
-                var model = new CodeMoveModel()
-                {
-                    App = app
-                };
+                var model = new CodeMoveModel();
+                model.AppId = app.ID;
                 return View(model);
             }
         }
@@ -145,7 +147,21 @@ namespace LSAppManagement.Controllers
         [HttpPost]
         public ActionResult CodeMove(CodeMoveModel info)
         {
-            return Json(info);
+            var request = WebRequest.CreateHttp("http://localhost/LSAppManagementWebservice/Build/Add?id=" + info.AppId + "&sha1=" + info.SHA1 + "&DeployEnv=" + info.Environment);
+            request.Headers.Add("Authorization", "Basic " + Settings.WebserviceCredentials);
+
+            try
+            {
+                using (HttpWebResponse response = (HttpWebResponse) request.GetResponse())
+                using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                {
+                    return Json(reader.ReadToEnd(), JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception e)
+            {
+                return Json(new { error = e.ToString(), stack = e.StackTrace }, JsonRequestBehavior.AllowGet);
+            }
         }
     }
 }

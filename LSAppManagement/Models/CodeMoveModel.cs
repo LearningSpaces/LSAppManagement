@@ -9,7 +9,7 @@ namespace LSAppManagement.Models
     public class CodeMoveModel
     {
         public string SHA1 { get; set; }
-        public ApplicationModel App { get; set; }
+        public int AppId { get; set; }
         public string Environment { get; set; }
         public string Comments { get; set; }
     }
