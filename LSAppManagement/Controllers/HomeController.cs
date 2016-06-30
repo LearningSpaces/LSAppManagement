@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Web;
 using System.Web.Mvc;
 
@@ -147,15 +148,16 @@ namespace LSAppManagement.Controllers
         [HttpPost]
         public ActionResult CodeMove(CodeMoveModel info)
         {
-            var request = WebRequest.CreateHttp("http://localhost/AppManagementWebservice/Build/Add?id=" + info.AppId + "&sha1=" + info.SHA1 + "&DeployEnv=" + info.Environment);
+            var request = WebRequest.CreateHttp("http://localhost/AppManagementWebservice/Build/Install?id=" + info.AppId + "&sha1=" + info.SHA1 + "&DeployEnv=" + info.Environment);
             request.Headers.Add("Authorization", "Basic " + Settings.WebserviceCredentials);
+            request.Timeout = Timeout.Infinite;
 
             try
             {
                 using (HttpWebResponse response = (HttpWebResponse) request.GetResponse())
                 using (StreamReader reader = new StreamReader(response.GetResponseStream()))
                 {
-                    return Json(reader.ReadToEnd(), JsonRequestBehavior.AllowGet);
+                    return Content(reader.ReadToEnd(), "application/json");
                 }
             }
             catch (Exception e)
